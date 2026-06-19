@@ -9,8 +9,8 @@ import keyboard as kb
 def getCoordinates():
     print(pag.position())
 
-kb.add_hotkey("l", getCoordinates)
+kb.add_hotkey("alt", getCoordinates)
 
-print("press l to get coordinates")
+print("press alt to get coordinates")
 
 kb.wait()
