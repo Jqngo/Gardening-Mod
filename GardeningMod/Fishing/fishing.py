@@ -4,8 +4,7 @@ import pyautogui as pag
 import keyboard as kb
 
 #target values of colour and of location of the pixel
-target_red =
-red = 
+target_red = 255, 85, 85
 
 #add a tolerance for rgb values
 def pixel_close(actual, target, tolerance=10):
@@ -18,9 +17,10 @@ def pixel_close(actual, target, tolerance=10):
 
 #main function that will detect the pixel and if it turns the colour, it will fish, otherwise it will do nothing
 def fish():
+  print("Fishing")
   global red, target_red
   while True:
-    if pixel_close(pag.pixel(red), target_red):
+    if pixel_close(pag.pixel(1012, 573), target_red):
       pag.click(button="right")
       time.sleep(0.1)
       pag.press("1")
@@ -30,5 +30,10 @@ def fish():
       pag.press("4")
       pag.click(button="right")
       time.sleep(0.1)
+    
+    if kb.is_pressed("esc"):
+       print("Stopping.")
+       break
 
-  kb.add_hotkey("8", fish)
+kb.add_hotkey("8", fish)
+kb.wait()

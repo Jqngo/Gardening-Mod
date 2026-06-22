@@ -57,7 +57,7 @@ def release_all(): # quick stop function
 
 def find_blossom():
     x, y = pag.locateCenterOnScreen(
-    r"D:\Python Projects\Tests\Gardening-Mod\GardeningMod\Image recognition\bBlue.png", confidence=0.75
+    r"D:\Python Projects\Tests\Gardening-Mod\GardeningMod\Image recognition\bBlue.png", confidence=0.9
     )
                     
     x2, y2 = pag.locateCenterOnScreen(
@@ -75,74 +75,96 @@ def find_blossom():
 
 def find_pest_equip():
     x, y = pag.locateCenterOnScreen(
-    r"D:\Python Projects\Tests\Gardening-Mod\GardeningMod\Image recognition\pChain.png", confidence=0.85
+    r"D:\Python Projects\Tests\Gardening-Mod\GardeningMod\Image recognition\pChain.png", confidence=0.9
     )
+    print(x, y)
                 
     x2, y2 = pag.locateCenterOnScreen(
-    r"D:\Python Projects\Tests\Gardening-Mod\GardeningMod\Image recognition\pCloak.png", confidence=0.85
+    r"D:\Python Projects\Tests\Gardening-Mod\GardeningMod\Image recognition\pCloak.png", confidence=0.9
     )
                 
     x3, y3 = pag.locateCenterOnScreen(
-    r"D:\Python Projects\Tests\Gardening-Mod\GardeningMod\Image recognition\pGlove.png", confidence=0.85
+    r"D:\Python Projects\Tests\Gardening-Mod\GardeningMod\Image recognition\pGlove.png", confidence=0.9
     )
                 
     x4, y4 = pag.locateCenterOnScreen(
-    r"D:\Python Projects\Tests\Gardening-Mod\GardeningMod\Image recognition\pRing.png", confidence=0.85
+    r"D:\Python Projects\Tests\Gardening-Mod\GardeningMod\Image recognition\pRing.png", confidence=0.9
     )
     return (x, y), (x2, y2), (x3, y3), (x4, y4)
 
 mode = "sweeping"
+armour = "none"
+lane = 0
 
 def mod():
+    global mode, direction, armour, lane
     print("running")
+    print(
+    "mode:", mode,
+    "armour:", armour,
+    "spawn1:", pag.pixel(1369, 380),
+    "spawn2:", pag.pixel(937, 186),
+    "spawn3:", pag.pixel(979, 184)
+)
     #warp to garden spawn
-    global mode, direction
+    
     while True:
         # check if pests are about to spawn then swap to other equipment
-        if pixel_close(pag.pixel(1369, 380), target_pests_spawns): 
-            print("detected pests")
-            mode = "pests"
-            release_all()
-            pag.press("capslock")
-            time.sleep(0.3)
-            p1, p2, p3, p4 = find_pest_equip()
-            #if the equipment isnt where it should be, equip it
-            if (p1) != target_p1:
-                pag.moveTo(p1)
-                time.sleep(0.1)
+        if lane == 29:
+            mode = "return"
+            print("return")
 
-                pag.leftClick()
-            if (p2) != target_p2:
-                pag.moveTo(p2)
-                time.sleep(0.1)
-            
-                pag.leftClick()
-            if (p3) != target_p3:
-                pag.moveTo(p3)
-                time.sleep(0.1)
-                
-                pag.leftClick()
+        if (pixel_close(pag.pixel(1369, 380), target_pests_spawns) or pixel_close(pag.pixel(937, 186), target_pests_spawns2) or pixel_close(pag.pixel(979, 184), target_pests_spawns2)) and mode != "change lane":
+            if armour != "mantid":
+                print("detected pests")
+                mode = "pests"
+                armour = "mantid"
+                release_all()
+                pag.press("capslock")
+                time.sleep(0.3)
+                p1, p2, p3, p4 = find_pest_equip()
+                #if the equipment isnt where it should be, equip it
+                if (p1) != target_p1:
+                    pag.moveTo(p1)
+                    time.sleep(0.1)
 
-            if (p4) != target_p4:
-                pag.moveTo(p4)
-                time.sleep(0.1)
+                    pag.leftClick()
+                if (p2) != target_p2:
+                    pag.moveTo(p2)
+                    time.sleep(0.1)
                 
-                pag.leftClick()
-            time.sleep(0.1)
-            pag.press("tab")
-            time.sleep(0.1)
-            pag.press("v")
-            time.sleep(0.1)
-            pag.rightClick()
-            time.sleep(0.1)
-            pag.press("2")
-            time.sleep(0.1)
+                    pag.leftClick()
+                if (p3) != target_p3:
+                    pag.moveTo(p3)
+                    time.sleep(0.1)
+                    
+                    pag.leftClick()
+
+                if (p4) != target_p4:
+                    pag.moveTo(p4)
+                    time.sleep(0.1)
+                    
+                    pag.leftClick()
+                time.sleep(0.1)
+                pag.press("tab")
+                time.sleep(0.1)
+                pag.press("y")
+                time.sleep(0.2)
+                pag.press("9")
+                time.sleep(0.3)
+                pag.press("tab")
+                time.sleep(0.2)
+                time.sleep(0.1)
+                print("sweeping")
+                mode = "sweeping"
             mode = "sweeping"
+            print("sweeping")
         
         #if pests are spawned, go do all the stuff
-        elif pixel_close(pag.pixel(1827, 384), target_pest2) or pixel_close(pag.pixel(1828, 384), target_pest2) or pixel_close(pag.pixel(1840, 384), target_pest2):
+        elif (pixel_close(pag.pixel(1827, 384), target_pest2) or pixel_close(pag.pixel(1828, 384), target_pest2) or pixel_close(pag.pixel(1840, 384), target_pest2)) and mode != "change lane":
             print("detected pests spawned")
             mode = "pests"
+            armour = "mossy"
             release_all()
             pag.press("capslock")
             time.sleep(0.5)
@@ -153,11 +175,13 @@ def mod():
                 time.sleep(0.1)
                 
                 pag.leftClick()
+
             if (b1) != target_first:
                 pag.moveTo(b1)
                 time.sleep(0.1)
                 
                 pag.leftClick()
+
             if (b3) != target_third:
                 pag.moveTo(b3)
                 time.sleep(0.1)
@@ -173,9 +197,12 @@ def mod():
             pag.press("tab")
             time.sleep(0.1)
             time.sleep(0.1)
-            pag.press("v")
+            pag.press("y")
+            time.sleep(0.3)
+            pag.press("5")
+            time.sleep(0.3)
+            pag.press("tab")
             time.sleep(0.1)
-            pag.rightClick()
             #now set spawn and tp to the pests
             pag.press("h") 
             time.sleep(0.05)
@@ -191,14 +218,11 @@ def mod():
             time.sleep(1)
             time.sleep(1)
             pag.mouseUp(button = "right")
-            pag.press("b")
-            time.sleep(0.1)
-            pag.press("v")
-            time.sleep(0.1)
-            pag.rightClick()
             time.sleep(0.1)
             pag.press("2")
             time.sleep(0.1)
+            pag.press("b")
+            time.sleep(0.2)
             mode = "sweeping"
         
         
@@ -218,19 +242,28 @@ def mod():
                 hold("s")
                 hold("space")
 
+        elif mode == "return":
+            release_all()
+            hold("s")
+            hold("d")
+            time.sleep(5.2)
+            mode = "sweeping"
+            direction = "up"
+        
         elif mode == "change lane":
             print("changing lane")
+            lane += 1
             release_all()
             if direction == "up":
                 hold("w")
-                time.sleep(0.4)
+                time.sleep(0.3)
                 release("w")
                 direction = "down"
                 mode = "sweeping"
             
             elif direction == "down":
                 hold("a")
-                time.sleep(0.4)
+                time.sleep(0.3)
                 release("a")
                 direction = "up"
                 mode = "sweeping"
